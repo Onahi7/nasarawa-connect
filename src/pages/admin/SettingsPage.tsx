@@ -15,22 +15,11 @@ const SettingsPage = () => {
   const { settings, refetch } = useSiteSettings();
   
   const [formData, setFormData] = useState({
-    site_title: "NAPPS Nasarawa",
-    site_description: "National Association of Proprietors of Private Schools - Nasarawa State",
+    site_name: "NAPPS Nasarawa",
+    primary_color: "#2563eb",
+    secondary_color: "#64748b",
+    logo_url: "https://napps.com.ng/images/logo.png?v9",
     contact_email: "info@nappsnasarawa.com",
-    contact_phone: "+234 XXX XXX XXXX",
-    contact_address: "Lafia, Nasarawa State, Nigeria",
-    social_facebook: "",
-    social_twitter: "",
-    social_instagram: "",
-    social_linkedin: "",
-    logo_url: "",
-    primary_color: "#1e40af",
-    secondary_color: "#059669",
-    footer_text: "© 2024 NAPPS Nasarawa. All rights reserved.",
-    seo_keywords: "private schools, education, nasarawa, napps",
-    google_analytics_id: "",
-  });
 
   useEffect(() => {
     if (settings && settings.length > 0) {
