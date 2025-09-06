@@ -8,7 +8,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useTeamMembers, useFileUpload } from "@/hooks/useCMS";
+import { useMembers } from "@/hooks/useMembers";
+import { adminAPI } from "@/services/adminAPI";
+import { useToast } from "@/hooks/use-toast";
 import { useState, useRef } from "react";
 import { 
   Plus, 
@@ -26,14 +28,14 @@ import {
   Users,
   Award
 } from "lucide-react";
-import { type TeamMember } from "@/services/cms-api";
 
 const MembersPage = () => {
-  const { members, loading, createMember, updateMember, deleteMember, refetch } = useTeamMembers();
-  const { uploadImage, uploading } = useFileUpload();
+  const { toast } = useToast();
+  const { members, loading, refetch } = useMembers();
   
   const [isCreating, setIsCreating] = useState(false);
-  const [editingMember, setEditingMember] = useState<TeamMember | null>(null);
+  const [editingMember, setEditingMember] = useState<any>(null);
+  const [uploading, setUploading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterCategory, setFilterCategory] = useState<string>("all");
   const [filterActive, setFilterActive] = useState<string>("all");
@@ -42,7 +44,7 @@ const MembersPage = () => {
   const [formData, setFormData] = useState({
     name: "",
     title: "",
-    category: "leadership" as TeamMember['category'],
+    category: "leadership" as string,
     bio: "",
     email: "",
     phone: "",
@@ -55,7 +57,6 @@ const MembersPage = () => {
     displayOrder: 1,
     isActive: true,
     isFeatured: false,
-    metadata: {} as Record<string, unknown>,
   });
 
   const resetForm = () => {
@@ -75,7 +76,6 @@ const MembersPage = () => {
       displayOrder: 1,
       isActive: true,
       isFeatured: false,
-      metadata: {},
     });
   };
 
@@ -83,22 +83,39 @@ const MembersPage = () => {
     e.preventDefault();
     
     if (!formData.name || !formData.title) {
+      toast({
+        title: "Error",
+        description: "Please fill in name and title",
+        variant: "destructive",
+      });
       return;
     }
 
     try {
       if (editingMember) {
-        await updateMember(editingMember._id!, formData);
+        await adminAPI.updateMember(editingMember._id, formData);
         setEditingMember(null);
+        toast({
+          title: "Success",
+          description: "Team member updated successfully",
+        });
       } else {
-        await createMember(formData);
+        await adminAPI.createMember(formData);
+        toast({
+          title: "Success",
+          description: "Team member created successfully",
+        });
       }
       
       resetForm();
       setIsCreating(false);
       refetch();
     } catch (error) {
-      console.error('Error saving member:', error);
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to save member",
+        variant: "destructive",
+      });
     }
   };
 
@@ -106,14 +123,22 @@ const MembersPage = () => {
     if (!confirm("Are you sure you want to delete this team member?")) return;
     
     try {
-      await deleteMember(id);
+      await adminAPI.deleteMember(id);
+      toast({
+        title: "Success",
+        description: "Team member deleted successfully",
+      });
       refetch();
     } catch (error) {
-      console.error('Error deleting member:', error);
+      toast({
+        title: "Error",
+        description: "Failed to delete team member",
+        variant: "destructive",
+      });
     }
   };
 
-  const handleEdit = (member: TeamMember) => {
+  const handleEdit = (member: any) => {
     setEditingMember(member);
     setFormData({
       name: member.name,
@@ -127,22 +152,31 @@ const MembersPage = () => {
       displayOrder: member.displayOrder || 1,
       isActive: member.isActive ?? true,
       isFeatured: member.isFeatured ?? false,
-      metadata: member.metadata || {},
     });
     setIsCreating(true);
   };
 
-  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-
+  const handleFileUpload = async (file: File) => {
+    setUploading(true);
     try {
-      const result = await uploadImage(file, 'team-photo');
-      setFormData(prev => ({ ...prev, imageUrl: result.url }));
+      const imageUrl = await adminAPI.uploadImage(file);
+      setFormData(prev => ({ ...prev, imageUrl }));
+      toast({
+        title: "Success",
+        description: "Image uploaded successfully",
+      });
     } catch (error) {
-      console.error('Error uploading image:', error);
+      toast({
+        title: "Error",
+        description: "Failed to upload image",
+        variant: "destructive",
+      });
+    } finally {
+      setUploading(false);
     }
   };
+
+
 
   const filteredMembers = members.filter(member => {
     const matchesSearch = member.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
