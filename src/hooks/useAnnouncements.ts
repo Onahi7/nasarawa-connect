@@ -1,18 +1,17 @@
 import { useState, useEffect } from 'react';
-import { supabase } from '@/integrations/supabase/client';
 
 export interface Announcement {
-  id: string;
+  _id: string;
   title: string;
   message: string;
   type: 'info' | 'warning' | 'success' | 'error';
-  is_active: boolean;
-  show_on_all_pages: boolean;
-  background_color: string | null;
-  text_color: string | null;
-  start_date: string | null;
-  end_date: string | null;
-  display_order: number;
+  isActive: boolean;
+  showOnAllPages: boolean;
+  backgroundColor: string | null;
+  textColor: string | null;
+  startDate: string | null;
+  endDate: string | null;
+  displayOrder: number;
 }
 
 export const useAnnouncements = () => {
@@ -20,18 +19,22 @@ export const useAnnouncements = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
   const fetchAnnouncements = async () => {
     try {
-      const { data, error } = await supabase
-        .from('announcements')
-        .select('*')
-        .eq('is_active', true)
-        .order('display_order');
-
-      if (error) throw error;
-      setAnnouncements((data || []) as Announcement[]);
+      setLoading(true);
+      const response = await fetch(`${API_BASE_URL}/connect-hub/announcements`);
+      
+      if (!response.ok) {
+        throw new Error(`Failed to fetch announcements: ${response.statusText}`);
+      }
+      
+      const data = await response.json();
+      setAnnouncements(data || []);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to fetch announcements');
+      console.error('Announcements fetch error:', err);
     } finally {
       setLoading(false);
     }

@@ -1,9 +1,13 @@
 import AdminLayout from "@/components/AdminLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
 import { useHeroImages } from "@/hooks/useHeroImages";
 import { useMembers } from "@/hooks/useMembers";
 import { useAnnouncements } from "@/hooks/useAnnouncements";
 import { useTeamMembers, useHomepageContent, useCMSAnalytics } from "@/hooks/useCMS";
+import adminAPI from "@/services/adminAPI";
+import { useState } from "react";
 import { 
   Users, 
   Image, 
@@ -17,18 +21,45 @@ import {
   FileText,
   Layout,
   Star,
-  Camera
+  Camera,
+  Database
 } from "lucide-react";
 
 const AdminDashboard = () => {
-  const { images: heroImages, loading: heroLoading } = useHeroImages();
-  const { members, loading: membersLoading } = useMembers();
-  const { announcements, loading: announcementsLoading } = useAnnouncements();
+  const { toast } = useToast();
+  const { images: heroImages, loading: heroLoading, refetch: refetchHero } = useHeroImages();
+  const { members, loading: membersLoading, refetch: refetchMembers } = useMembers();
+  const { announcements, loading: announcementsLoading, refetch: refetchAnnouncements } = useAnnouncements();
   
   // CMS Data
   const { members: cmsMembers, loading: cmsLoading } = useTeamMembers();
   const { content: homepageContent, loading: contentLoading } = useHomepageContent();
   const { analytics, loading: analyticsLoading } = useCMSAnalytics();
+
+  const [seedingData, setSeedingData] = useState(false);
+
+  const handleSeedData = async () => {
+    setSeedingData(true);
+    try {
+      await adminAPI.seedInitialData();
+      toast({
+        title: "Success",
+        description: "Initial data seeded successfully! Hero images and team members have been populated.",
+      });
+      // Refetch all data
+      refetchHero();
+      refetchMembers();
+      refetchAnnouncements();
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to seed initial data",
+        variant: "destructive",
+      });
+    } finally {
+      setSeedingData(false);
+    }
+  };
 
   const stats = [
     {
@@ -160,10 +191,22 @@ const AdminDashboard = () => {
       <div className="space-y-6">
         {/* Welcome Section */}
         <div className="bg-gradient-to-r from-napps-blue to-napps-green rounded-lg p-6 text-white">
-          <h2 className="text-2xl font-bold mb-2">Welcome back, Admin!</h2>
-          <p className="text-blue-100">
-            Manage your NAPPS portal content, Elder Omaku photos, team members, and homepage sections.
-          </p>
+          <div className="flex justify-between items-center">
+            <div>
+              <h2 className="text-2xl font-bold mb-2">Welcome back, Admin!</h2>
+              <p className="text-blue-100">
+                Manage your NAPPS portal content, Elder Omaku photos, team members, and homepage sections.
+              </p>
+            </div>
+            <Button 
+              onClick={handleSeedData}
+              disabled={seedingData}
+              className="bg-white text-napps-blue hover:bg-gray-100"
+            >
+              <Database className="w-4 h-4 mr-2" />
+              {seedingData ? 'Seeding...' : 'Seed Initial Data'}
+            </Button>
+          </div>
         </div>
 
         {/* Stats Grid */}

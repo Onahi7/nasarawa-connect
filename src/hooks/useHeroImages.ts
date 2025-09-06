@@ -1,13 +1,14 @@
 import { useState, useEffect } from 'react';
-import { supabase } from '@/integrations/supabase/client';
 
 export interface HeroImage {
-  id: string;
+  _id: string;
   title: string;
   description: string | null;
-  image_url: string;
-  display_order: number;
-  is_active: boolean;
+  imageUrl: string;
+  displayOrder: number;
+  isActive: boolean;
+  buttonText?: string;
+  buttonLink?: string;
 }
 
 export const useHeroImages = () => {
@@ -15,18 +16,22 @@ export const useHeroImages = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
   const fetchImages = async () => {
     try {
-      const { data, error } = await supabase
-        .from('hero_images')
-        .select('*')
-        .eq('is_active', true)
-        .order('display_order');
-
-      if (error) throw error;
+      setLoading(true);
+      const response = await fetch(`${API_BASE_URL}/connect-hub/hero-images`);
+      
+      if (!response.ok) {
+        throw new Error(`Failed to fetch hero images: ${response.statusText}`);
+      }
+      
+      const data = await response.json();
       setImages(data || []);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to fetch images');
+      console.error('Hero images fetch error:', err);
     } finally {
       setLoading(false);
     }
