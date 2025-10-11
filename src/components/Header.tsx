@@ -19,22 +19,38 @@ const Header = () => {
       
       {/* Main navigation */}
       <nav className="bg-white/95 backdrop-blur-sm shadow-sm px-4 py-3">
-        <div className="max-w-7xl mx-auto flex items-center justify-end space-x-6">
-          {navItems.map((item) => (
-            <a
-              key={item.name}
-              href={item.href}
-              target={item.href.startsWith('https://') ? '_blank' : '_self'}
-              rel={item.href.startsWith('https://') ? 'noopener noreferrer' : undefined}
-              className={`text-sm font-medium transition-colors hover:text-napps-blue ${
-                item.name === "RESULTS" || item.name === "PROPRIETOR REGISTRATION" || item.name === "Portal"
-                  ? "text-napps-blue"
-                  : "text-gray-700"
-              }`}
-            >
-              {item.name}
-            </a>
-          ))}
+        <div className="max-w-7xl mx-auto flex items-center justify-between">
+          {/* Logo Section */}
+          <div className="flex items-center space-x-3">
+            <img 
+              src="/logo.png" 
+              alt="NAPPS Nasarawa Logo" 
+              className="h-10 w-auto"
+            />
+            <div className="hidden sm:block">
+              <h1 className="text-lg font-bold text-gray-900">NAPPS Nasarawa</h1>
+              <p className="text-xs text-gray-600">Connect Hub Portal</p>
+            </div>
+          </div>
+
+          {/* Navigation Links */}
+          <div className="flex items-center space-x-6">
+            {navItems.map((item) => (
+              <a
+                key={item.name}
+                href={item.href}
+                target={item.href.startsWith('https://') ? '_blank' : '_self'}
+                rel={item.href.startsWith('https://') ? 'noopener noreferrer' : undefined}
+                className={`text-sm font-medium transition-colors hover:text-napps-blue ${
+                  item.name === "RESULTS" || item.name === "PROPRIETOR REGISTRATION" || item.name === "Portal"
+                    ? "text-napps-blue"
+                    : "text-gray-700"
+                }`}
+              >
+                {item.name}
+              </a>
+            ))}
+          </div>
         </div>
       </nav>
     </header>

@@ -65,12 +65,14 @@ export function AdminSidebar() {
         {/* Header */}
         <div className="p-4 border-b">
           <div className="flex items-center space-x-3">
-            <div className="w-8 h-8 bg-napps-blue rounded-lg flex items-center justify-center">
-              <Settings className="w-5 h-5 text-white" />
-            </div>
+            <img 
+              src="/logo.png" 
+              alt="NAPPS Logo" 
+              className="w-8 h-8 rounded-lg object-contain"
+            />
             {state !== "collapsed" && (
               <div>
-                <h2 className="font-bold text-gray-900">CMS Admin</h2>
+                <h2 className="font-bold text-gray-900">NAPPS Admin</h2>
                 <p className="text-xs text-gray-500">Content Management</p>
               </div>
             )}

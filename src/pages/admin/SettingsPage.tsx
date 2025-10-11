@@ -16,17 +16,31 @@ const SettingsPage = () => {
   
   const [formData, setFormData] = useState({
     site_name: "NAPPS Nasarawa",
+    site_title: "NAPPS Nasarawa State",
+    site_description: "National Association of Proprietors of Private Schools - Nasarawa State Chapter",
     primary_color: "#2563eb",
     secondary_color: "#64748b",
-    logo_url: "https://napps.com.ng/images/logo.png?v9",
+    logo_url: "/logo.png",
     contact_email: "info@nappsnasarawa.com",
+    contact_phone: "+234-XXX-XXX-XXXX",
+    contact_address: "Lafia, Nasarawa State, Nigeria",
+    hero_title: "Welcome to NAPPS Nasarawa State",
+    hero_subtitle: "National Association of Proprietors of Private Schools",
+    footer_text: "© 2024 NAPPS Nasarawa State. All rights reserved.",
+    social_facebook: "",
+    social_twitter: "",
+    social_instagram: "",
+    social_linkedin: "",
+    seo_keywords: "NAPPS, Nasarawa, private schools, education, Nigeria",
+    google_analytics_id: ""
+  });
 
   useEffect(() => {
     if (settings && settings.length > 0) {
       const settingsObj = settings.reduce((acc, setting) => {
         acc[setting.setting_key] = setting.setting_value || '';
         return acc;
-      }, {} as any);
+      }, {} as Record<string, string>);
       
       setFormData(prev => ({ ...prev, ...settingsObj }));
     }
