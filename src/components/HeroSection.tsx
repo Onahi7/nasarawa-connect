@@ -93,10 +93,10 @@ const HeroSection = () => {
             >
               <CarouselContent>
                 {images.length > 0 ? images.map((image) => (
-                  <CarouselItem key={`banner-${image.id}`}>
+                  <CarouselItem key={`banner-${image._id}`}>
                     <div className="relative w-full h-64 sm:h-80 lg:h-96 rounded-lg overflow-hidden">
                       <img 
-                        src={image.image_url} 
+                        src={image.imageUrl} 
                         alt={image.title}
                         className="w-full h-full object-cover"
                       />

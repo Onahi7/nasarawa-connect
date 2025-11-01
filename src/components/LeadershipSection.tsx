@@ -27,10 +27,10 @@ const LeadershipSection = () => {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
             {leaders.map((leader) => (
-              <div key={leader.id} className="text-center group cursor-pointer">
+              <div key={leader._id} className="text-center group cursor-pointer">
                 <div className="relative mb-6 overflow-hidden rounded-lg">
                   <img 
-                    src={leader.image_url || "/placeholder.svg"}
+                    src={leader.imageUrl || "/placeholder.svg"}
                     alt={leader.name}
                     className="w-full h-64 sm:h-72 lg:h-80 object-cover transition-transform duration-300 group-hover:scale-105"
                   />
