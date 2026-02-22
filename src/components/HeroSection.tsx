@@ -1,54 +1,43 @@
 import { Button } from "@/components/ui/button";
-import { Megaphone, ChevronLeft, ChevronRight } from "lucide-react";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
-import { useHeroImages } from "@/hooks/useHeroImages";
-import { useEffect, useState } from "react";
 import Autoplay from "embla-carousel-autoplay";
 
 const HeroSection = () => {
-  const { images, loading } = useHeroImages();
-  const [currentSlide, setCurrentSlide] = useState(0);
-
   return (
     <section className="relative min-h-screen overflow-hidden pt-16 sm:pt-20" style={{ background: 'var(--gradient-hero)' }}>
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-2 gap-8 lg:gap-12 items-center min-h-[80vh]">
-        {/* Left side - Carousel content */}
+        {/* Left side - Content */}
         <div className="text-white order-2 lg:order-1">
-          {loading ? (
-            <div className="animate-pulse space-y-4 sm:space-y-6">
-              <div className="h-10 sm:h-12 bg-white/20 rounded mb-4 sm:mb-6"></div>
-              <div className="h-6 sm:h-8 bg-white/20 rounded mb-3 sm:mb-4"></div>
-              <div className="h-4 bg-white/20 rounded w-2/3 mb-4 sm:mb-6"></div>
-              <div className="h-10 sm:h-12 bg-white/20 rounded w-full sm:w-32"></div>
+          <div className="space-y-4 sm:space-y-6">
+            <h1 className="text-3xl sm:text-5xl lg:text-7xl font-bold leading-tight">
+              Welcome to<br />
+              <span className="text-napps-yellow">NAPPS NASARAWA STATE</span>
+            </h1>
+            <p className="text-base sm:text-lg leading-relaxed text-gray-200 max-w-2xl">
+              National Association of Proprietors of Private Schools
+            </p>
+            <div>
+              <Button 
+                className="bg-napps-green hover:bg-napps-green/90 text-white font-medium px-6 py-3 sm:px-8 text-sm sm:text-base rounded-md transition-all duration-300 hover:scale-105 w-full sm:w-auto"
+              >
+                REGISTER
+              </Button>
             </div>
-          ) : (
-            <Carousel 
-              className="w-full"
-              plugins={[
-                Autoplay({
-                  delay: 5000,
-                })
-              ]}
-            >
-              <CarouselContent>
-                {images.length > 0 ? images.map((image) => (
-                  <CarouselItem key={image.id}>
-                    <div className="space-y-4 sm:space-y-6">
-                      <h1 className="text-3xl sm:text-4xl lg:text-6xl font-bold leading-tight">
-                        {image.title}
-                      </h1>
-                      {image.description && (
-                        <p className="text-base sm:text-lg leading-relaxed text-gray-200 max-w-2xl">
-                          {image.description}
-                        </p>
-                      )}
-                      <div>
-                        <Button 
-                          className="bg-napps-green hover:bg-napps-green/90 text-white font-medium px-8 py-3 rounded-md transition-all duration-300 hover:scale-105"
-                        >
-                          REGISTER
-                        </Button>
-                      </div>
+          </div>
+        </div>
+
+        {/* Right side - Banner Image */}
+        <div className="relative order-1 lg:order-2">
+          <div className="relative w-full h-64 sm:h-80 lg:h-96 rounded-lg overflow-hidden">
+            <img 
+              src="/banner1.jpg" 
+              alt="NAPPS Nasarawa State Banner"
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
+          </div>
+        </div>
+      </div>
                     </div>
                   </CarouselItem>
                 )) : (
